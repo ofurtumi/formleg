@@ -1,0 +1,21 @@
+Init: q0
+Accept: q6
+
+q0,A,q1
+q0,1,q2
+q1,a,q1
+q1,n,q6
+q1,s,q3
+q2,1,q2
+q2,n,q6
+q2,s,q3
+q3,a,q4
+q3,1,q5
+q4,a,q4
+q4,s,q3
+q4,n,q6
+q5,1,q4
+q5,s,q3
+q5,n,q6
+q6,A,q1
+q6,1,q2
