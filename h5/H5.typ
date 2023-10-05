@@ -1,7 +1,7 @@
 #import "@templates/ass:0.1.1": *
 
 #show: doc => template(
-  project: "Tutorial 5",
+  project: "Homework 5",
   class: "Töl301G",
   doc
 )
@@ -143,15 +143,23 @@ $
   Y &-> 0
 $
 
+#pagebreak()
 = Show that i,j,k apples are context free
 
-We can show that the language is context free by declaring rules for it, since $i + j > k$ and we need $i$ or $j$ to be atleast $1$ since $0 + 0 !> 0$, we can let $k$ always be $0$
+We can show that this is context free by creating a CFG that generates the language.
+
+We start by creating a CFG for the left hand side apples, we want to be able to get infinate or none apples and finally end on a plus that leads into the right hand side. Well say that $S -> a A$ and $A -> a A | B$
+
+Now lets do the right hand side, it's similar to the left side, infinate or none apples but now we want the number of apples to match or be greater than the right side of $=$. We start by defining a new transition $S -> + a B$ and define $B -> a B a | a B | =$ 
+
+We end up with the following CFG:
+
 $
-  A &-> B + C = D\
-  A &-> C + B = D\
-  B &-> a + B\
-  B &-> a\
-  C &-> B\
-  C &-> epsilon\
-  D &-> epsilon
+  S &-> a A\
+  S &-> + a B\
+  A &-> a A\
+  A &-> + B\
+  B &-> a B\
+  B &-> a B a \
+  B &-> =
 $
