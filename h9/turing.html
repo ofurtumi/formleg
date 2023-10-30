@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="tyyli.css" />
+
+    <title>TÖL301G: TM</title>
+
+    <script>
+        var tm_name = 'no name';
+        var start_state;
+        var accept_state;
+        var delta = {};
+        var compiled = 0;
+
+        // Compile the code describing a TM
+	function kaanna() 
+	{
+	  var koodi = document.getElementById("koodi").value;
+	  var lines = koodi.split('\n');
+          var q0;
+          var a;
+
+          compiled = 0;
+          delta    = {}
+          start_state  = undefined;
+          accept_state = undefined;
+	  for(var i=0; i < lines.length; i++) {
+            var rivi = lines[i].replace( /^\s+/,'');
+            if ( q0 != undefined ) {
+                var r = rivi.replace( /\s/g,'' ).split(',');
+                if ( r.length != 3 ) {
+                    alert( 'Error in line ' + (i+1) + ' (expecting a triple)');
+                  return;
+                }
+                var q1 = r[0];
+                var wr = r[1];
+                var mv = r[2];
+                if ( mv != '<' && mv != '>' && mv != '-' ) {
+                    alert( 'Error in line ' + (i+1) + ' (illegal movement)');
+                  return;
+                }
+                if ( delta[q0] == undefined ) {
+                  delta[q0] = {};
+                }
+                delta[q0][a] = [q1,wr,mv];
+                q0 = undefined;
+            }
+            else 
+            {
+              var eka = rivi.replace( /\s.*/,'' );
+              var lop = rivi.replace( /\S*\s+/,'');
+              if      ( eka.toLowerCase() == 'name:'   )  { tm_name      = lop; }
+              else if ( eka.toLowerCase() == 'init:'   )  { start_state  = lop; }
+              else if ( eka.toLowerCase() == 'accept:' )  { accept_state = lop; }
+              else if ( eka.length <= 0 || eka.substring(0,2)=='//' )
+              {
+                // comment!?
+              }
+              else {
+                var action = rivi.replace( /\s/g,'' ).split(',');
+                if ( action.length == 2 ) {
+                  q0 = action[0];
+                  a  = action[1];
+                } else {
+                    alert( 'Error in line ' + (i+1) + ' (expecting [state],[symbol] pair: ' + rivi );
+                  return;
+                }
+              }
+            }
+          }
+          compiled = 1;
+	  document.getElementById('result').innerHTML = 'compiled!';
+	}
+
+        // Execute the TM with given string
+        function aja( ) {
+          if ( !compiled ) {
+            alert( 'Compile first!' );
+            return;
+          }
+	  var tape = document.getElementById("str").value.split('');
+          var head = 0;
+          var q = start_state;
+          var steps = 0;
+          while( q != accept_state && steps < 1000 ) {
+            var a = tape[head];
+            console.log( 'state: ' + q + ' x ' + a );
+            var action = delta[q][a];
+            if ( action == undefined ) {
+              break;
+            }
+            q          = action[0];
+            tape[head] = action[1];
+            if ( action[2] == '<' ) {
+              if ( head>0 ) {
+                head--;
+              } else {
+                tape.unshift('_');
+              }
+            }
+            else if ( action[2] == '>' ) {
+              head++;
+              if ( head>=tape.length ) {
+                tape[head] = '_';
+              }
+            }
+          }
+          if ( q != undefined && accept_state==q ) {         
+              console.log( 'accept' );
+	      document.getElementById("result").innerHTML = 'accept';
+          } else {
+              console.log( 'reject' );
+	      document.getElementById("result").innerHTML = 'reject';
+          }
+          console.log( 'tape: ' + tape.toString() );
+        }
+    </script>
+</head>
+
+<body>
+
+  <div style="background-color: rgb(200,200,200); margin:0px;">
+    <table>
+      <tr>
+	<td><a href="re.html" >RE</a>&nbsp;</td>
+	<td><a href="dfa.html">DFA</a>&nbsp;</td>
+	<td><a href="nfa.html">NFA</a>&nbsp;</td>
+	<td><a href="tm.html" >TM</a>&nbsp;</td>
+	<td><a href="tm2.html" >TM v.2</a>&nbsp;</td>
+      </tr>
+    </table>
+  </div>
+
+<h1>TM Tester</h1>
+
+<table>
+<tr valign="top"><td>TM code:</td><td><textarea rows=20 cols=60 id='koodi' name="koodi">//Enter your code here
+Init:   [start state]
+Accept: [accept state]
+
+// Transitions
+[current state],[read symbol]
+[next state],[write symbol],[movement]
+</textarea></td></tr>
+<tr><td>Test string:</td><td>
+  <input id="str" name="str" type="text"></input>
+  &nbsp;
+  &nbsp;
+  <label id="result" name="str" type="text"></label>
+</td></tr>
+<tr><td></td><td>
+<button type="button" onclick='kaanna();'>Compile</button>
+<button type="button" onclick='aja();'>Execute</button>
+</td>
+</tr>
+</table>
+
+</body>
+</html>
