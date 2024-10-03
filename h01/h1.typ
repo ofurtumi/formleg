@@ -30,7 +30,7 @@ $
 Since we know that $k >= 2$ we can say that $k^4 >= 4k^3$ and $k^2 >= 2k$ and $12k >= 13$ and $4 >= 6$.
 
 = Triple $0$ state machine
-#image("./imgs/h1-2.png")
+#image("../imgs/h1-2.png")
 Here we have a simle state machine tha only allows through itself binary strings that include a substring of _"000"_.
 
 #pagebreak()
